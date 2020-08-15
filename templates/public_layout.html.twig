@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Proxi local!{% endblock %}</title>
+    {% block fonts %}
+        <!-- Google Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    {% endblock %}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('public') }}
+    {% endblock %}
+</head>
+<body>
+<!-- Page Preloder -->
+{#<div id="preloder">#}
+{#    <div class="loader"></div>#}
+{#</div>#}
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <div class="header__nav">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li class="active"><a href="{{ path('public_homepage') }}">Home</a></li>
+                            <li><a href="./listing.html">Listing</a></li>
+                            <li><a href="#">Categories</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./about.html">About</a></li>
+                                    <li><a href="./listing-details.html">Listing Details</a></li>
+                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                    <li><a href="./contact.html">Contact</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="#">Shop</a></li>
+                        </ul>
+                    </nav>
+                    <div class="header__menu__right">
+                        <a href="{{ path('public_research') }}" class="primary-btn"><i class="fa fa-plus"></i>Add Listing</a>
+                        <a href="#" class="login-btn"><i class="fa fa-user"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+    </div>
+</header>
+<!-- Header Section End -->
+
+{% block body %}{% endblock %}
+{% block javascripts %}
+    <!-- Js Plugins -->
+    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.nicescroll.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.barfiller.js') }}"></script>
+    <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.slicknav.js') }}"></script>
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}') }}"></script>
+{% endblock %}
+</body>
+</html>
