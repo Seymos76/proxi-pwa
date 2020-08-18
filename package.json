@@ -13,6 +13,17 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build && encore production --progress"
+    },
+    "dependencies": {
+        "bootstrap": "^4.5.2",
+        "jquery": "^3.5.1",
+        "jquery-mousewheel": "^3.1.13",
+        "popper.js": "^1.16.1",
+        "react-isotope": "^1.0.7",
+        "react-magnific-popup": "^1.0.1",
+        "react-on-images-loaded": "^2.2.5",
+        "react-owl-carousel": "^2.3.1",
+        "react-scroll-parallax": "^2.3.4"
     }
 }

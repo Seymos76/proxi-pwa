@@ -11,6 +11,9 @@ Encore
     .setOutputPath('public/build/')
     // public path used by the web server to access the output path
     .setPublicPath('/build')
+    .copyFiles([
+        {from: './assets/saasland/img/', to: 'saasland/[path][name].[ext]', pattern: /\.(png|jpg|jpeg)$/, includeSubdirectories: true},
+    ])
     // only needed for CDN's or sub-directory deploy
     //.setManifestKeyPrefix('build/')
 
@@ -23,7 +26,8 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('public', './assets/sass/style.scss')
+    // .addEntry('public', './assets/sass/style.scss')
+    .addEntry('saasland', './assets/saasland/saasland.js')
     .addEntry('app', './assets/js/app.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
