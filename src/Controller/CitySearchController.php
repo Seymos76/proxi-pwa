@@ -4,7 +4,7 @@
 namespace App\Controller;
 
 
-use App\Repository\CityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,8 +25,8 @@ class CitySearchController extends AbstractController
      */
     public function searchCity(
         Request $request,
-        CityRepository $cityRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        EntityManagerInterface $entityManager
     )
     {
         if ($request->query->count() < 1) {
@@ -40,13 +40,13 @@ class CitySearchController extends AbstractController
         $search = $request->query->get('search');
         $cities = [];
         if (preg_match('/^\d{5,9}$/', $search)) {
-            $cities = $cityRepository->findBy(
-                ['zipCode' => $search]
-            );
+            $query = $entityManager->createQuery('SELECT DISTINCT c.name, c.zipCode, c.id, c.slug FROM App\Entity\City c WHERE c.zipCode like ?1');
+            $query->setParameter(1,"$search%");
+            $cities = $query->getResult();
         } else {
-            $cities = $cityRepository->findBy(
-                ['slug' => strtolower($search)]
-            );
+            $query = $entityManager->createQuery('SELECT DISTINCT c.name, c.zipCode, c.id, c.slug FROM App\Entity\City c WHERE c.slug like ?1');
+            $query->setParameter(1,"$search%");
+            $cities = $query->getResult();
         }
 
         if (count($cities) === 0) {
@@ -54,7 +54,6 @@ class CitySearchController extends AbstractController
             return new JsonResponse($jsonData, Response::HTTP_NOT_FOUND, [], true);
         }
         $jsonData = $serializer->serialize($cities, 'json', ['city_search']);
-//        dd($jsonData);
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 }
