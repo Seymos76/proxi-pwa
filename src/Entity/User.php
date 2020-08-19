@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -46,9 +48,15 @@ class User implements UserInterface
      */
     private $changedPasswordAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Business::class, mappedBy="user")
+     */
+    private $businesses;
+
     public function __construct()
     {
         $this->registeredAt = new \DateTime('now');
+        $this->businesses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,7 +140,7 @@ class User implements UserInterface
     /**
      * @return \DateTime
      */
-    public function getChangedPasswordAt(): \DateTime
+    public function getChangedPasswordAt(): ?\DateTime
     {
         return $this->changedPasswordAt;
     }
@@ -161,5 +169,36 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Business[]
+     */
+    public function getBusinesses(): Collection
+    {
+        return $this->businesses;
+    }
+
+    public function addBusiness(Business $business): self
+    {
+        if (!$this->businesses->contains($business)) {
+            $this->businesses[] = $business;
+            $business->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBusiness(Business $business): self
+    {
+        if ($this->businesses->contains($business)) {
+            $this->businesses->removeElement($business);
+            // set the owning side to null (unless already changed)
+            if ($business->getUser() === $this) {
+                $business->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

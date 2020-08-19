@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -20,7 +22,7 @@ class City
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"city_search"})
+     * @Groups({"city_search", "business_page"})
      */
     private $name;
 
@@ -46,7 +48,7 @@ class City
 
     /**
      * @ORM\Column(type="string", length=10)
-     * @Groups({"city_search"})
+     * @Groups({"city_search", "business_page"})
      */
     private $zipCode;
 
@@ -54,6 +56,16 @@ class City
      * @ORM\Column(type="integer", nullable=true)
      */
     private $population;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Business::class, mappedBy="city")
+     */
+    private $businesses;
+
+    public function __construct()
+    {
+        $this->businesses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -145,6 +157,37 @@ class City
     public function setPopulation(?int $population): self
     {
         $this->population = $population;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Business[]
+     */
+    public function getBusinesses(): Collection
+    {
+        return $this->businesses;
+    }
+
+    public function addBusiness(Business $business): self
+    {
+        if (!$this->businesses->contains($business)) {
+            $this->businesses[] = $business;
+            $business->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBusiness(Business $business): self
+    {
+        if ($this->businesses->contains($business)) {
+            $this->businesses->removeElement($business);
+            // set the owning side to null (unless already changed)
+            if ($business->getCity() === $this) {
+                $business->setCity(null);
+            }
+        }
 
         return $this;
     }
