@@ -5,11 +5,19 @@ namespace App\DataFixtures;
 
 
 use App\Entity\City;
+use Cocur\Slugify\Slugify;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class CityFixtures extends Fixture
 {
+    private $slugger;
+
+    public function __construct(Slugify $slugify)
+    {
+        $this->slugger = $slugify;
+    }
+
     public function load(ObjectManager $manager)
     {
         $this->loadFrenchTowns($manager);
@@ -24,6 +32,8 @@ class CityFixtures extends Fixture
             $town = new City();
             if (array_key_exists("nom", $item)) {
                 $town->setName($item["nom"]);
+                $slug = $this->slugger->slugify($item['nom']);
+                $town->setSlug($slug);
             }
             if (array_key_exists("code", $item)) {
                 $town->setCode($item["code"]);
@@ -34,7 +44,11 @@ class CityFixtures extends Fixture
                 $town->setDepartmentCode($item['codeDepartement']);
             }
             if (array_key_exists("codesPostaux", $item)) {
-                $town->setZipCodes($item["codesPostaux"]);
+                if (isset($item['codesPostaux'][0])) {
+                    $town->setZipCode($item["codesPostaux"][0]);
+                } else {
+                    $town->setZipCode($item["code"]);
+                }
             }
             if (array_key_exists("population", $item)) {
                 $town->setPopulation($item["population"]);

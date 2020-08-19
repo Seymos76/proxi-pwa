@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CityRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CityRepository::class)
@@ -19,8 +20,14 @@ class City
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"city_search"})
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
@@ -38,9 +45,10 @@ class City
     private $regionCode;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="string", length=10)
+     * @Groups({"city_search"})
      */
-    private $zipCodes = [];
+    private $zipCode;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -61,6 +69,23 @@ class City
     {
         $this->name = $name;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
         return $this;
     }
 
@@ -100,14 +125,14 @@ class City
         return $this;
     }
 
-    public function getZipCodes(): ?array
+    public function getZipCode(): ?string
     {
-        return $this->zipCodes;
+        return $this->zipCode;
     }
 
-    public function setZipCodes(?array $zipCodes): self
+    public function setZipCode(?string $zipCode): self
     {
-        $this->zipCodes = $zipCodes;
+        $this->zipCode = $zipCode;
 
         return $this;
     }
