@@ -15,7 +15,7 @@ class PublicController extends AbstractController
      * @Route(path="/", name="public_homepage")
      * @return Response
      */
-    public function home(Request $request)
+    public function home()
     {
         return $this->render(
             'public/home.html.twig'

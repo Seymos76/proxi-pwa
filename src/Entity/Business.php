@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BusinessRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -66,9 +68,21 @@ class Business
      */
     private $user;
 
+    /**
+     * @ORM\OneToMany(targetEntity=TimeTable::class, mappedBy="business", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $timeTables;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BusinessCategory::class, inversedBy="business")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $businessCategory;
+
     public function __construct()
     {
         $this->registeredAt = new \DateTime('now');
+        $this->timeTables = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,6 +182,49 @@ class Business
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TimeTable[]
+     */
+    public function getTimeTables(): Collection
+    {
+        return $this->timeTables;
+    }
+
+    public function addTimeTable(TimeTable $timeTable): self
+    {
+        if (!$this->timeTables->contains($timeTable)) {
+            $this->timeTables[] = $timeTable;
+            $timeTable->setBusiness($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeTable(TimeTable $timeTable): self
+    {
+        if ($this->timeTables->contains($timeTable)) {
+            $this->timeTables->removeElement($timeTable);
+            // set the owning side to null (unless already changed)
+            if ($timeTable->getBusiness() === $this) {
+                $timeTable->setBusiness(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBusinessCategory(): ?BusinessCategory
+    {
+        return $this->businessCategory;
+    }
+
+    public function setBusinessCategory(?BusinessCategory $businessCategory): self
+    {
+        $this->businessCategory = $businessCategory;
 
         return $this;
     }

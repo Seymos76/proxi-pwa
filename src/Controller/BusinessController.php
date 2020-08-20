@@ -74,4 +74,20 @@ class BusinessController extends AbstractController
         $jsonData = $serializer->serialize($business, 'json', ['groups' => ['business_page']]);
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * @Route(path="/business/timetables", name="business_create_timetables")
+     * @return Response
+     */
+    public function businessCreateTimeTable()
+    {
+        /** @example $time = strtotime('20-09-2020 21:00'); */
+        $time = strtotime('20-09-2020 21:00');
+        /** @example $date = date(string format, strtotime); */
+        $date = date('d/m/Y H:i',strtotime('21:00'));
+        $dateTime = \DateTime::createFromFormat('d/m/Y H:i',$date);
+        dump($dateTime);
+        $formatted = $dateTime->format('H:i');
+        return new Response("Date: $formatted", 200);
+    }
 }
