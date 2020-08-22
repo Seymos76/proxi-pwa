@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,44 +17,45 @@ class City
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"city_search", "business_page"})
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"city_search", "business_page"})
      */
-    private $slug;
+    private string $slug;
 
     /**
      * @ORM\Column(type="string", length=10, nullable=true)
      */
-    private $code;
+    private string $code;
 
     /**
      * @ORM\Column(type="string", length=5, nullable=true)
      */
-    private $departmentCode;
+    private string $departmentCode;
 
     /**
      * @ORM\Column(type="string", length=5, nullable=true)
      */
-    private $regionCode;
+    private string $regionCode;
 
     /**
      * @ORM\Column(type="string", length=10)
      * @Groups({"city_search", "business_page"})
      */
-    private $zipCode;
+    private string $zipCode;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $population;
+    private int $population;
 
     /**
      * @ORM\OneToMany(targetEntity=Business::class, mappedBy="city")
@@ -162,9 +162,9 @@ class City
     }
 
     /**
-     * @return Collection|Business[]
+     * @return ArrayCollection|Business[]
      */
-    public function getBusinesses(): Collection
+    public function getBusinesses(): ArrayCollection
     {
         return $this->businesses;
     }

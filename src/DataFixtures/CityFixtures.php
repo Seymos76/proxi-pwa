@@ -8,19 +8,15 @@ use App\Entity\City;
 use Cocur\Slugify\Slugify;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class CityFixtures extends Fixture
 {
     public const TOWN_FR_REFERENCE = "city_fr_";
-    private $slugger;
-    private $serializer;
+    private Slugify $slugger;
 
-    public function __construct(Slugify $slugify, SerializerInterface $serializer)
+    public function __construct(Slugify $slugify)
     {
         $this->slugger = $slugify;
-        $this->serializer = $serializer;
     }
 
     public function load(ObjectManager $manager)
@@ -64,8 +60,7 @@ class CityFixtures extends Fixture
     private function getDecodedArrayFromFile(string $file)
     {
         $file = file_get_contents($file);
-        $json = $this->serializer->deserialize($file, City::class, 'json');
-        dump($json);
+//        $json = $this->serializer->deserialize($file, City::class, 'json');
         // parse regions_fr.json to array
         $array = json_decode($file, true);
         return $array;

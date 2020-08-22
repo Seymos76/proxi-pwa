@@ -35,7 +35,6 @@ class BusinessController extends AbstractController
             return new JsonResponse($jsonData, Response::HTTP_NOT_FOUND, [], true);
         }
         $search = $request->query->get('search');
-        $businessList = [];
         if (preg_match('/^\d{5,9}$/', $search)) {
             $query = $entityManager->createQuery('SELECT DISTINCT b.name, b.address, b.id, b.slug FROM App\Entity\Business b JOIN b.city c WHERE c.zipCode = ?1');
             $query->setParameter(1,$search);
@@ -47,6 +46,7 @@ class BusinessController extends AbstractController
         }
 
         $jsonData = $serializer->serialize($businessList, 'json', ['city_search']);
+        dump('business_by_city',$jsonData);
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
@@ -70,8 +70,9 @@ class BusinessController extends AbstractController
         /** @var Business $business */
         $business = $query->getResult();
 //        dd($business);
-
-        $jsonData = $serializer->serialize($business, 'json', ['groups' => ['business_page']]);
+//        $jsonData = $serializer->serialize($business, 'json', ['groups' => ['business_page']]);
+        $jsonData = $serializer->serialize($business, 'json', ['business_page']);
+        dd($jsonData);
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
 
@@ -90,4 +91,11 @@ class BusinessController extends AbstractController
         $formatted = $dateTime->format('H:i');
         return new Response("Date: $formatted", 200);
     }
+
+    public static function getEntityFqcn(): string
+    {
+        return Business::class;
+    }
+
+
 }

@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 
 
 use App\Entity\Business;
+use App\Entity\BusinessCategory;
 use App\Entity\City;
 use App\Entity\TimeTable;
 use App\Entity\User;
@@ -16,7 +17,7 @@ use Faker\Factory;
 
 class BusinessFixtures extends Fixture implements DependentFixtureInterface
 {
-    private $slugify;
+    private Slugify $slugify;
 
     public function __construct(Slugify $slugify)
     {
@@ -35,7 +36,10 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
             /** @var User $user */
             $user = $this->getReference(UserFixtures::USER_REFERENCE.$i);
             $user->addBusiness($business);
-//            $businessTimeTable = $this->createTimeTable();
+            /** @var BusinessCategory $businessCategory */
+            $businessCategory = $this->getReference("business_category_$i");
+            $businessCategory->addBusiness($business);
+            $businessTimeTable = $this->createTimeTable('08:30','18:30');
 //            $user = $this->getReference(UserFixtures::USER_REFERENCE . $faker->randomElement([1, 2, 3, 4, 5]));
             $business
                 ->setName($businessName)
@@ -44,19 +48,21 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
                 ->setPhoneNumber($faker->phoneNumber)
                 ->setCity($city)
                 ->setSlug($businessSlug)
+                ->addTimeTable($businessTimeTable)
+                ->setBusinessCategory($businessCategory)
+                ->setImage('https://p0.pikist.com/photos/530/603/maison-manechal-hautes-pyrenees-france-holidays-pyrenees-architecture-french-toulouse-travel.jpg')
                 ;
             $manager->persist($business);
         }
         $manager->flush();
     }
 
-    private function createTimeTable(): TimeTable
+    private function createTimeTable(string $start = null, string $end = null): TimeTable
     {
         $timeTable = new TimeTable();
-        return $timeTable->setDay(TimeTable::MONDAY)
-            ->setDayPart(TimeTable::AM)
-            ->setOpeningTime(new \DateTime('08:00'))
-            ->setClosingTime(new \DateTime('18:30'))
+        return $timeTable->addDay(TimeTable::MONDAY)->addDay(TimeTable::TUESDAY)->addDay(TimeTable::WEDNESDAY)
+            ->setOpeningTime(new \DateTime($start))
+            ->setClosingTime(new \DateTime($end))
         ;
     }
 
@@ -78,6 +84,7 @@ class BusinessFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             CityFixtures::class,
+            BusinessCategoryFixtures::class,
             UserFixtures::class
         ];
     }

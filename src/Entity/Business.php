@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\BusinessRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,63 +17,64 @@ class Business
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"business_page"})
+     * @Groups({"business_page","city_search"})
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"business_page"})
+     * @Groups({"business_page","city_search"})
      */
-    private $slug;
+    private string $slug;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"business_page"})
+     * @Groups({"business_page","city_search"})
      */
-    private $address;
+    private string $address;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"business_page"})
+     * @Groups({"business_page","city_search"})
      */
-    private $image;
+    private string $image;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
      * @Groups({"business_page"})
      */
-    private $phoneNumber;
+    private string $phoneNumber;
 
     /**
      * @ORM\ManyToOne(targetEntity=City::class, inversedBy="businesses")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"business_page"})
+     * @Groups({"business_page","city_search"})
      */
-    private $city;
+    private City $city;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $registeredAt;
+    private \DateTime $registeredAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="businesses")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private User $user;
 
     /**
      * @ORM\OneToMany(targetEntity=TimeTable::class, mappedBy="business", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"business_page"})
      */
     private $timeTables;
 
     /**
-     * @ORM\ManyToOne(targetEntity=BusinessCategory::class, inversedBy="business")
+     * @ORM\ManyToOne(targetEntity=BusinessCategory::class, inversedBy="businesses")
      * @ORM\JoinColumn(nullable=false)
      */
     private $businessCategory;
@@ -131,7 +131,7 @@ class Business
         return $this->image;
     }
 
-    public function setImage(?string $image): self
+    public function setImage(string $image): self
     {
         $this->image = $image;
 
@@ -143,7 +143,7 @@ class Business
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(?string $phoneNumber): self
+    public function setPhoneNumber(string $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
 
@@ -155,19 +155,19 @@ class Business
         return $this->city;
     }
 
-    public function setCity(?City $city): self
+    public function setCity(City $city): self
     {
         $this->city = $city;
 
         return $this;
     }
 
-    public function getRegisteredAt(): ?\DateTimeInterface
+    public function getRegisteredAt(): ?\DateTime
     {
         return $this->registeredAt;
     }
 
-    public function setRegisteredAt(\DateTimeInterface $registeredAt): self
+    public function setRegisteredAt(\DateTime $registeredAt): self
     {
         $this->registeredAt = $registeredAt;
 
@@ -179,7 +179,7 @@ class Business
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
@@ -187,9 +187,9 @@ class Business
     }
 
     /**
-     * @return Collection|TimeTable[]
+     * @return ArrayCollection|TimeTable[]
      */
-    public function getTimeTables(): Collection
+    public function getTimeTables(): ArrayCollection
     {
         return $this->timeTables;
     }

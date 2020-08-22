@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TimeTableRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TimeTableRepository::class)
@@ -18,55 +19,83 @@ class TimeTable
     public const SATURDAY = 'saturday';
     public const SUNDAY = 'sunday';
 
-    public const AM = 'am';
-    public const PM = 'pm';
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="array", length=100)
+     * @Groups({"business_page"})
      */
-    private $day;
-
-    /**
-     * @ORM\Column(type="time")
-     */
-    private $openingTime;
+    private array $days = [];
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"business_page"})
      */
-    private $closingTime;
+    private \DateTime $openingTime;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="time")
+     * @Groups({"business_page"})
      */
-    private $dayPart;
+    private \DateTime $closingTime;
 
     /**
      * @ORM\ManyToOne(targetEntity=Business::class, inversedBy="timeTables")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $business;
+    private Business $business;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDay(): ?string
+    public function getDays(): ?array
     {
-        return $this->day;
+        return $this->days;
     }
 
-    public function setDay(string $day): self
+    public function addDay(string $day): self
     {
-        $this->day = $day;
+        if (!in_array($day, $this->days, true)) {
+            $this->days[] = $day;
+            return $this;
+        }
+        return $this;
+    }
+
+    public function addDays(array $days): self
+    {
+        foreach ($days as $day) {
+            if (!in_array($day, $this->days, true)) {
+                $this->days[] = $day;
+            }
+        }
+        return $this;
+    }
+
+    public function removeDay(string $day): self
+    {
+        if (($key = array_search($day, $this->days, true)) !== false) {
+            unset($this->days[$key]);
+            return $this;
+        }
+
+        return $this;
+    }
+
+    public function removeDays(array $days): self
+    {
+        foreach ($days as $day) {
+            if (($key = array_search($day, $this->days, true)) !== false) {
+                unset($this->days[$key]);
+            }
+        }
 
         return $this;
     }
@@ -91,18 +120,6 @@ class TimeTable
     public function setClosingTime(\DateTimeInterface $closingTime): self
     {
         $this->closingTime = $closingTime;
-
-        return $this;
-    }
-
-    public function getDayPart(): ?string
-    {
-        return $this->dayPart;
-    }
-
-    public function setDayPart(string $dayPart): self
-    {
-        $this->dayPart = $dayPart;
 
         return $this;
     }
